@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookLendingService.Application.Books.Commands;
+using BookLendingService.Application.Books.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +11,46 @@ namespace BookLendingService.API.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        // GET: api/<BooksController>
+        private readonly IMediator _mediator;
+
+        public BooksController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            var books = await _mediator.Send(new GetAllBooksQuery());
+            return Ok(books);
         }
 
-        // GET api/<BooksController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetBookById(Guid id)
         {
-            return "value";
+            var book = await _mediator.Send(new GetBookByIdQuery(id));
+            return book is not null ? Ok(book) : NotFound($"Book with ID {id} not found.");
         }
 
-        // POST api/<BooksController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> AddBook([FromBody] AddBookCommand command)
         {
+            var book = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
         }
 
-        // PUT api/<BooksController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("{id}/checkout")]
+        public async Task<IActionResult> CheckoutBook(Guid id)
         {
+            var success = await _mediator.Send(new CheckoutBookCommand(id));
+            return success ? Ok($"Book {id} checked out.") : NotFound($"Book {id} not available.");
         }
 
-        // DELETE api/<BooksController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("{id}/return")]
+        public async Task<IActionResult> ReturnBook(Guid id)
         {
+            var success = await _mediator.Send(new ReturnBookCommand(id));
+            return success ? Ok($"Book {id} returned.") : NotFound($"Book {id} not found or not checked out.");
         }
     }
 }
