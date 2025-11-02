@@ -1,0 +1,38 @@
+name: CI with Tests and SonarCloud
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install SonarScanner
+      run: dotnet tool install --global dotnet-sonarscanner
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Begin SonarCloud analysis
+      run: dotnet sonarscanner begin /k:"yuvraj1165_BookLendingService" /o:"yuvraj1165" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+
+    - name: Build solution
+      run: dotnet build --no-restore
+
+    - name: Run tests
+      run: dotnet test --no-build --verbosity normal
+
+    - name: End SonarCloud analysis
+      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
