@@ -16,9 +16,11 @@ namespace BookLendingService.Application.Books.Handlers
         public async Task<bool> Handle(ReturnBookCommand request, CancellationToken cancellationToken)
         {
             var book = await _repo.GetByIdAsync(request.Id);
-            if (book is null || book.IsAvailable) return false;
 
-            book.IsAvailable = true;
+            if (book is null)
+                throw new KeyNotFoundException($"Book with ID {request.Id} not found.");
+
+            await _repo.ReturnAsync(book);
             return true;
         }
     }

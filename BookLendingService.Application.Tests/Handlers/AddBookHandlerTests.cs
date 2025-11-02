@@ -1,32 +1,29 @@
 ﻿using BookLendingService.Application.Books.Commands;
 using BookLendingService.Application.Books.Handlers;
-using FluentAssertions;
+using BookLendingService.Data.DomainModel;
+using Moq;
 
 namespace BookLendingService.Application.Tests.Handlers
 {
     [TestFixture]
-    public class AddBookHandlerTests : InMemoryBookTestBase
+    public class AddBookHandlerTests : BookTestHandlerBase
     {
         private AddBookHandler _handler = null!;
 
         [SetUp]
         public void SetupHandler()
         {
-            _handler = new AddBookHandler(Repo);
+            _handler = new AddBookHandler(mockRepo.Object);
         }
 
         [Test]
-        public async Task Should_Add_New_Book()
+        public async Task Handle_ShoudInvokeAddAsyncWithCorrectBook()
         {
-            var command = new AddBookCommand("New Sample Book", "New Author");
-            var result = await _handler.Handle(command, default);
+            var command = new AddBookCommand("A new book", "A New Author");
 
-            result.Should().NotBeNull();
-            result.Title.Should().Be("New Sample Book");
-            result.Author.Should().Be("New Author");
+            await _handler.Handle(command, CancellationToken.None);
 
-            var allBooks = await Repo.GetAllAsync();
-            allBooks.Should().Contain(result);
+            mockRepo.Verify(r => r.AddAsync(It.Is<Book>(b => b.Title == "A new book" && b.Author == "A New Author")), Times.Once);
         }
     }
 }

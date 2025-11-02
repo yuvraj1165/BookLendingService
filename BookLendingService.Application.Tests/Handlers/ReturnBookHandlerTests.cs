@@ -1,46 +1,30 @@
 ﻿using BookLendingService.Application.Books.Commands;
 using BookLendingService.Application.Books.Handlers;
-using FluentAssertions;
+using BookLendingService.Data.DomainModel;
+using Moq;
 
 namespace BookLendingService.Application.Tests.Handlers
 {
     [TestFixture]
-    public class ReturnBookHandlerTests : InMemoryBookTestBase
+    public class ReturnBookHandlerTests : BookTestHandlerBase
     {
         private ReturnBookHandler _handler = null!;
 
         [SetUp]
-        public Task SetupHandler()
-        {
-            _handler = new ReturnBookHandler(Repo);
-            return Task.CompletedTask;
-        }
-
-        [Test]
-        public async Task Should_Return_CheckedOut_Book()
+        public void SetupHandler()
         {
             SampleBook.IsAvailable = false;
-            var result = await _handler.Handle(new ReturnBookCommand(SampleBook.Id), default);
-            var updated = await Repo.GetByIdAsync(SampleBook.Id);
-
-            result.Should().BeTrue();
-            updated!.IsAvailable.Should().BeTrue();
+            _handler = new ReturnBookHandler(mockRepo.Object);
         }
 
         [Test]
-        public async Task Should_Not_Return_Already_Available_Book()
+        public async Task Handle_ShoudInvokeReturnAsync()
         {
-            SampleBook.IsAvailable = true;
-            var result = await _handler.Handle(new ReturnBookCommand(SampleBook.Id), default);
+            var command = new ReturnBookCommand(SampleBook.Id);
 
-            result.Should().BeFalse();
-        }
+            await _handler.Handle(command, CancellationToken.None);
 
-        [Test]
-        public async Task Should_Not_Return_Nonexistent_Book()
-        {
-            var result = await _handler.Handle(new ReturnBookCommand(Guid.NewGuid()), default);
-            result.Should().BeFalse();
+            mockRepo.Verify(r => r.ReturnAsync(It.IsAny<Book>()), Times.Once);
         }
     }
 }

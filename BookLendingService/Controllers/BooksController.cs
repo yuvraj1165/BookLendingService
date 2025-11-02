@@ -42,15 +42,45 @@ namespace BookLendingService.API.Controllers
         [HttpPost("{id}/checkout")]
         public async Task<IActionResult> CheckoutBook(Guid id)
         {
-            var success = await _mediator.Send(new CheckoutBookCommand(id));
-            return success ? Ok($"Book {id} checked out.") : NotFound($"Book {id} not available.");
+            try
+            {
+                var result = await _mediator.Send(new CheckoutBookCommand(id));
+
+                if (!result)
+                    return NotFound($"Book {id} not available.");
+
+                return Ok($"Book {id} checked out.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Book with ID {id} not found.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Unexpected error: {ex.Message}");
+            }
         }
 
         [HttpPost("{id}/return")]
         public async Task<IActionResult> ReturnBook(Guid id)
         {
-            var success = await _mediator.Send(new ReturnBookCommand(id));
-            return success ? Ok($"Book {id} returned.") : NotFound($"Book {id} not found or not checked out.");
+            try
+            {
+                var result = await _mediator.Send(new ReturnBookCommand(id));
+
+                if (!result)
+                    return NotFound($"Book {id} not found or not checked out.");
+
+                return Ok($"Book {id} returned.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Book with ID {id} not found.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Unexpected error: {ex.Message}");
+            }
         }
     }
 }

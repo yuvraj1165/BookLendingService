@@ -1,34 +1,28 @@
 ﻿using BookLendingService.Application.Books.Handlers;
 using BookLendingService.Application.Books.Queries;
-using FluentAssertions;
+using Moq;
 
 namespace BookLendingService.Application.Tests.Handlers
 {
     [TestFixture]
-    public class GetBookByIdHandlerTests : InMemoryBookTestBase
+    public class GetBookByIdHandlerTests : BookTestHandlerBase
     {
         private GetBookByIdHandler _handler = null!;
 
         [SetUp]
         public void SetupHandler()
         {
-            _handler = new GetBookByIdHandler(Repo);
+            _handler = new GetBookByIdHandler(mockRepo.Object);
         }
 
         [Test]
-        public async Task Should_Return_Book_By_Id()
+        public async Task Handle_Should_InvokeGetByIdAsync()
         {
-            var result = await _handler.Handle(new GetBookByIdQuery(SampleBook.Id), default);
+            var query = new GetBookByIdQuery(new Guid());
 
-            result.Should().NotBeNull();
-            result.Id.Should().Be(SampleBook.Id);
-        }
+            await _handler.Handle(query, CancellationToken.None);
 
-        [Test]
-        public async Task Should_Return_Null_For_Invalid_Id()
-        {
-            var result = await _handler.Handle(new GetBookByIdQuery(Guid.NewGuid()), default);
-            result.Should().BeNull();
+            mockRepo.Verify(r => r.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
     }
 }

@@ -19,20 +19,28 @@ namespace BookLendingService.Data.Repositories
             return Task.CompletedTask;
         }
 
-        public Task<bool> CheckoutAsync(Guid id)
+        public Task CheckoutAsync(Book book)
         {
-            var book = _books.FirstOrDefault(b => b.Id == id);
-            if (book == null || book.IsAvailable) return Task.FromResult(false);
-            book.IsAvailable = true;
-            return Task.FromResult(true);
+            if (book is null)
+                throw new ArgumentNullException(nameof(book));
+
+            if (!book.IsAvailable)
+                throw new InvalidOperationException("Book is already checked out.");
+
+            book.IsAvailable = false;
+            return Task.CompletedTask;
         }
 
-        public Task<bool> ReturnAsync(Guid id)
+        public Task ReturnAsync(Book book)
         {
-            var book = _books.FirstOrDefault(b => b.Id == id);
-            if (book == null || !book.IsAvailable) return Task.FromResult(false);
-            book.IsAvailable = false;
-            return Task.FromResult(true);
+            if (book is null)
+                throw new ArgumentNullException(nameof(book));
+
+            if (book.IsAvailable)
+                throw new InvalidOperationException("Book cannot be returned as not checked out");
+
+            book.IsAvailable = true;
+            return Task.CompletedTask;
         }
     }
 }

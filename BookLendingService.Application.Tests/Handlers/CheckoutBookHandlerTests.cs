@@ -1,45 +1,29 @@
 ﻿using BookLendingService.Application.Books.Commands;
 using BookLendingService.Application.Books.Handlers;
-using FluentAssertions;
+using BookLendingService.Data.DomainModel;
+using Moq;
 
 namespace BookLendingService.Application.Tests.Handlers
 {
     [TestFixture]
-    public class CheckoutBookHandlerTests : InMemoryBookTestBase
+    public class CheckoutBookHandlerTests : BookTestHandlerBase
     {
-        private CheckoutBookHandler _handler = null!;
+        private CheckoutBookHandler handler = null!;
 
         [SetUp]
         public void SetupHandler()
         {
-            _handler = new CheckoutBookHandler(Repo);
+            handler = new CheckoutBookHandler(mockRepo.Object);
         }
 
         [Test]
-        public async Task Should_CheckOut_Available_Book()
+        public async Task Handle_ShoudInvokeCheckoutAsync()
         {
-            SampleBook.IsAvailable = true;
-            var result = await _handler.Handle(new CheckoutBookCommand(SampleBook.Id), default);
+            var command = new CheckoutBookCommand(SampleBook.Id);
 
-            result.Should().BeTrue();
-            SampleBook.IsAvailable.Should().BeFalse();
-        }
+            await handler.Handle(command, CancellationToken.None);
 
-        [Test]
-        public async Task Should_Not_CheckOut_Already_CheckedOut_Book()
-        {
-            SampleBook.IsAvailable = false;
-            var result = await _handler.Handle(new CheckoutBookCommand(SampleBook.Id), default);
-
-            result.Should().BeFalse();
-            SampleBook.IsAvailable.Should().BeFalse();
-        }
-
-        [Test]
-        public async Task Should_Not_CheckOut_Nonexistent_Book()
-        {
-            var result = await _handler.Handle(new CheckoutBookCommand(Guid.NewGuid()), default);
-            result.Should().BeFalse();
+            mockRepo.Verify(r => r.CheckoutAsync(It.IsAny<Book>()), Times.Once);
         }
     }
 }

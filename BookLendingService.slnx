@@ -7,5 +7,6 @@
   <Folder Name="/tests/">
     <Project Path="BookLendingService.API.Tests/BookLendingService.API.Tests.csproj" Id="801b6813-83d6-40d7-a429-9ee48ab93fb9" />
     <Project Path="BookLendingService.Application.Tests/BookLendingService.Application.Tests.csproj" Id="8056a521-a385-4ce6-a2a6-4f2726b5646c" />
+    <Project Path="BookLendingService.Data.Tests/BookLendingService.Data.Tests.csproj" Id="dbb21aaf-136a-4bec-b802-41628c9bd752" />
   </Folder>
 </Solution>
