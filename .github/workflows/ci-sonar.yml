@@ -34,7 +34,7 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Run tests with Coverlet
-      run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
+      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/coverage.cobertura.xml
 
     - name: Convert .coverage to cobertura.xml
       run: |
