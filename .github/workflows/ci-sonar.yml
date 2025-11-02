@@ -26,7 +26,9 @@ jobs:
       run: dotnet restore
 
     - name: Begin SonarCloud analysis
-      run: dotnet sonarscanner begin /k:"yuvraj1165_BookLendingService" /o:"yuvraj1165" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+      env:
+        SECRET: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner begin /k:"yuvraj1165_BookLendingService" /o:"yuvraj1165" /d:sonar.login="$SECRET" /d:sonar.host.url="https://sonarcloud.io"
 
     - name: Build solution
       run: dotnet build --no-restore
@@ -35,4 +37,4 @@ jobs:
       run: dotnet test --no-build --verbosity normal
 
     - name: End SonarCloud analysis
-      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      run: dotnet sonarscanner end /d:sonar.login="$SECRET"
