@@ -28,7 +28,7 @@ jobs:
     - name: Begin SonarCloud analysis
       env:
         SECRET: ${{ secrets.SONAR_TOKEN }}
-      run: dotnet sonarscanner begin /k:"yuvraj1165_BookLendingService" /o:"yuvraj1165" /d:sonar.login="$SECRET" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="coverage-report/Cobertura.xml"
+      run: dotnet sonarscanner begin /k:"yuvraj1165_BookLendingService" /o:"yuvraj1165" /d:sonar.login="$SECRET" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="coverage-report/coverage.cobertura.xml"
 
     - name: Build solution
       run: dotnet build --no-restore
@@ -36,13 +36,18 @@ jobs:
     - name: Run tests with Coverlet
       run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
 
+    - name: Convert .coverage to cobertura.xml
+      run: |
+        for file in $(find . -type f -name '*.coverage'); do
+          coverlet "$file" --target "dotnet" --targetargs "test --no-build" --format cobertura --output "./coverage-report/coverage.cobertura.xml"
+        done
+
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: Convert coverage to Cobertura
       run: |
         reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coverage-report" -reporttypes:"Cobertura"
-
 
     - name: End SonarCloud analysis
       env:
