@@ -36,16 +36,32 @@ jobs:
     - name: Create coverage-report directory
       run: mkdir -p coverage-report
 
-    - name: Run tests with Coverlet
-      run: dotnet test BookLendingService.Application.Tests/BookLendingService.Application.Tests.csproj --no-build --verbosity normal --results-directory coverage-report /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/coverage.cobertura.xml
-
+    - name: Run tests with Coverlet (produce cobertura XML)
+      # Run tests for the whole solution so all test projects are covered.
+      run: |
+        dotnet test BookLendingService.sln --no-build --verbosity normal \
+          /p:CollectCoverage=true \
+          /p:CoverletOutput=coverage-report/ \
+          /p:CoverletOutputFormat=cobertura
+    
     - name: Debug:List coverage files
       run: |
         echo "Listing coverage-report directory:"
-        ls -R coverage-report
+        ls -R coverage-report || true
 
-    - name: Debug:Print coverage XML
-      run: cat coverage-report/coverage.cobertura.xml
+    - name: Debug:Print coverage XML (if present)
+      run: |
+        COVERAGE_XML="coverage-report/coverage.cobertura.xml"
+        if [ -f "$COVERAGE_XML" ]; then
+          echo "Coverage XML found:"
+          cat "$COVERAGE_XML"
+        else
+          echo "Coverage XML not found at $COVERAGE_XML"
+          # Show any file that was produced for easier debugging
+          echo "Other files in coverage-report:"
+          ls -la coverage-report || true
+          exit 1
+        fi
 
     - name: End SonarCloud analysis
       env:
