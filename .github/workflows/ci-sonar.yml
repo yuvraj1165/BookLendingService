@@ -41,12 +41,6 @@ jobs:
 
     - name: Run BookLendingService.Application.Tests with Coverlet
       run: dotnet test BookLendingService.Application.Tests/BookLendingService.Application.Tests.csproj --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/BookLendingService.Application.Tests.cobertura.xml
-
-    - name: Install ReportGenerator
-      run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-    - name: Merge coverage reports
-      run: reportgenerator -reports:"coverage-report/*.cobertura.xml" -targetdir:"coverage-report/merged" -reporttypes:Cobertura
     
     - name: Debug:List coverage files
       run: |
@@ -69,6 +63,17 @@ jobs:
           ls -la coverage-report || true
           exit 1
         fi
+
+    - name: Install ReportGenerator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+    
+    - name: Merge coverage reports
+      run: |
+        echo "Merging coverage reports..."
+        reportgenerator -reports:"coverage-report/*.cobertura.xml" -targetdir:"coverage-report/merged" -reporttypes:Cobertura || {
+          echo "No coverage reports found to merge."
+          exit 1
+        }
 
     - name: End SonarCloud analysis
       env:
