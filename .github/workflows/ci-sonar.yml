@@ -39,7 +39,7 @@ jobs:
     - name: Run tests with Coverlet (produce cobertura XML)
       # Run tests for the whole solution so all test projects are covered.
       run: |
-        dotnet test BookLendingService.sln --no-build --verbosity normal \
+        dotnet test BookLendingService.slnx --no-build --verbosity normal \
           /p:CollectCoverage=true \
           /p:CoverletOutput=coverage-report/ \
           /p:CoverletOutputFormat=cobertura
