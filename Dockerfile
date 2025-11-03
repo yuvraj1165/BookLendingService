@@ -9,7 +9,7 @@ COPY **/*.csproj ./
 
 # Copy everything else and build
 COPY . ./
-RUN dotnet publish BookLendingService/BookLendingService.API.csproj -c Release -o /app/out
+RUN dotnet publish BookLendingService.API/BookLendingService.API.csproj -c Release -o /app/out
 
 
 # Use the ASP.NET runtime image for the final container

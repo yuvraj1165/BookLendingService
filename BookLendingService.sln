@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BookLendingService", "BookLendingService", "{3E9AFB5C-1F85-D838-3A2E-4574E5A76D42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLendingService.API", "BookLendingService\BookLendingService.API.csproj", "{115DF0B2-A5B6-4187-92EF-C16F0BB55D89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLendingService.API", "BookLendingService.API\BookLendingService.API.csproj", "{115DF0B2-A5B6-4187-92EF-C16F0BB55D89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLendingService.API.Tests", "BookLendingService.API.Tests\BookLendingService.API.Tests.csproj", "{A76E3533-FF7D-49C2-8EAA-5FB9D76BABBA}"
 EndProject
