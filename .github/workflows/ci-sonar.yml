@@ -42,10 +42,10 @@ jobs:
     - name: Run BookLendingService.Application.Tests with Coverlet
       run: dotnet test BookLendingService.Application.Tests/BookLendingService.Application.Tests.csproj --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/BookLendingService.Application.Tests.cobertura.xml
     
-    - name: Debug:List coverage files
+    - name: Debug:List coverage XML files
       run: |
-        echo "Listing coverage-report directory:"
-        ls -R coverage-report || true
+        echo "Checking for coverage files:"
+        find coverage-report -name "*.cobertura.xml" -exec ls -la {} \;
 
     - name: Debug:Check merged coverage file
       run: ls -l coverage-report/merged
