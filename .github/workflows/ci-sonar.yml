@@ -1,0 +1,114 @@
+name: CI with Tests and SonarCloud
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install SonarScanner
+      run: dotnet tool install --global dotnet-sonarscanner
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Begin SonarCloud analysis
+      env:
+        SECRET: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner begin /k:"yuvraj1165_BookLendingService" /o:"yuvraj1165" /d:sonar.login="$SECRET" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="coverage-report/merged/Cobertura.xml"
+
+    - name: Build solution
+      run: dotnet build --no-restore
+       
+    - name: Create coverage-report directory
+      run: mkdir -p coverage-report
+
+    - name: Run BookLendingService.Data.Tests with Coverlet
+      run: dotnet test BookLendingService.Data.Tests/BookLendingService.Data.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/bookLendingService.Data.Tests.cobertura.xml
+
+    - name: Debug:Check BookLendingService.Data.Tests coverage file
+      run: ls -la coverage-report
+
+    - name: Move coverage file to coverage-report
+      run: |
+        COVERAGE_FILE=$(find . -type f -name "coverage.cobertura.xml" | head -n 1)
+        if [ -f "$COVERAGE_FILE" ]; then
+          echo "Found coverage file at $COVERAGE_FILE"
+          mv "$COVERAGE_FILE" coverage-report/bookLendingService.Data.Tests.cobertura.xml
+        else
+          echo "Coverage file not found."
+          exit 1
+        fi
+
+    - name: Run BookLendingService.Application.Tests with Coverlet
+      run: dotnet test BookLendingService.Application.Tests/BookLendingService.Application.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/bookLendingService.Application.Tests.cobertura.xml
+
+    - name: Debug:Check BookLendingService.Application.Tests coverage file
+      run: ls -la coverage-report
+
+    - name: Move coverage file to coverage-report
+      run: |
+        COVERAGE_FILE=$(find . -type f -name "coverage.cobertura.xml" | head -n 1)
+        if [ -f "$COVERAGE_FILE" ]; then
+          echo "Found coverage file at $COVERAGE_FILE"
+          mv "$COVERAGE_FILE" coverage-report/bookLendingService.Application.Tests.cobertura.xml
+        else
+          echo "Coverage file not found."
+          exit 1
+        fi
+      
+    - name: Run BookLendingService.API.Tests with Coverlet
+      run: dotnet test BookLendingService.API.Tests/BookLendingService.API.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/bookLendingService.API.Tests.cobertura.xml
+
+    - name: Debug:Check BookLendingService.API.Tests coverage file
+      run: ls -la coverage-report
+
+    - name: Move coverage file to coverage-report
+      run: |
+        COVERAGE_FILE=$(find . -type f -name "coverage.cobertura.xml" | head -n 1)
+        if [ -f "$COVERAGE_FILE" ]; then
+          echo "Found coverage file at $COVERAGE_FILE"
+          mv "$COVERAGE_FILE" coverage-report/bookLendingService.API.Tests.cobertura.xml
+        else
+          echo "Coverage file not found."
+          exit 1
+        fi
+
+    - name: Install ReportGenerator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+    
+    - name: Merge coverage reports
+      run: |
+        echo "Merging coverage reports..."
+        reportgenerator -reports:"coverage-report/*.cobertura.xml" -targetdir:"coverage-report/merged" -reporttypes:Cobertura || {
+          echo "No coverage reports found to merge."
+          exit 1
+        }
+    
+    - name: Debug:List coverage XML files
+      run: |
+        echo "Checking for coverage files:"
+        find coverage-report -name "*.cobertura.xml" -exec ls -la {} \;
+
+    - name: Debug:Check merged coverage file
+      run: ls -l coverage-report/merged
+
+    
+  
+    - name: End SonarCloud analysis
+      env:
+        SECRET: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner end /d:sonar.login="$SECRET"

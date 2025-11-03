@@ -1,3 +1,6 @@
+using BookLendingService.Application.Books.Handlers;
+using BookLendingService.Data.Interfaces;
+using BookLendingService.Data.Repositories;
 
 namespace BookLendingService.API
 {
@@ -10,9 +13,14 @@ namespace BookLendingService.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetAllBooksHandler)));
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSingleton<IBookRepository, InMemoryBookRepository>();
+
 
             var app = builder.Build();
 
@@ -26,7 +34,6 @@ namespace BookLendingService.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
