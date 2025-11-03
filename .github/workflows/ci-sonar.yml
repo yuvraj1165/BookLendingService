@@ -41,7 +41,7 @@ jobs:
       run: |
         dotnet test BookLendingService.slnx --no-build --verbosity normal \
           /p:CollectCoverage=true \
-          /p:CoverletOutput=coverage-report/ \
+          /p:CoverletOutput=coverage-report/coverage.cobertura.xml \
           /p:CoverletOutputFormat=cobertura
     
     - name: Debug:List coverage files
