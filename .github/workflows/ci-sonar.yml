@@ -42,12 +42,34 @@ jobs:
     - name: Debug:Check BookLendingService.Data.Tests coverage file
       run: ls -la coverage-report
 
+    - name: Move coverage file to coverage-report
+      run: |
+        COVERAGE_FILE=$(find . -type f -name "coverage.cobertura.xml" | head -n 1)
+        if [ -f "$COVERAGE_FILE" ]; then
+          echo "Found coverage file at $COVERAGE_FILE"
+          mv "$COVERAGE_FILE" coverage-report/bookLendingService.Data.Tests.cobertura.xml
+        else
+          echo "Coverage file not found."
+          exit 1
+        fi
+
     - name: Run BookLendingService.Application.Tests with Coverlet
-      run: dotnet test BookLendingService.Application.Tests/BookLendingService.Application.Tests.csproj --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/BookLendingService.Application.Tests.cobertura.xml
+      run: dotnet test BookLendingService.Application.Tests/BookLendingService.Application.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/BookLendingService.Application.Tests.cobertura.xml
 
     - name: Debug:Check BookLendingService.Application.Tests coverage file
       run: ls -la coverage-report
 
+    - name: Move coverage file to coverage-report
+      run: |
+        COVERAGE_FILE=$(find . -type f -name "coverage.cobertura.xml" | head -n 1)
+        if [ -f "$COVERAGE_FILE" ]; then
+          echo "Found coverage file at $COVERAGE_FILE"
+          mv "$COVERAGE_FILE" coverage-report/bookLendingService.Data.Tests.cobertura.xml
+        else
+          echo "Coverage file not found."
+          exit 1
+        fi
+        
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
     
