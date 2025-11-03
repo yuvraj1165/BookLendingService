@@ -18,7 +18,7 @@ namespace BookLendingService.Application.Tests.Handlers
         [Test]
         public async Task Handle_Should_InvokeGetByIdAsync()
         {
-            var query = new GetBookByIdQuery(new Guid());
+            var query = new GetBookByIdQuery(Guid.Empty);
 
             await _handler.Handle(query, CancellationToken.None);
 

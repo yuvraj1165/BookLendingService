@@ -17,7 +17,7 @@ namespace BookLendingService.Application.Tests.Handlers
         }
 
         [Test]
-        public async Task Handle_ShoudInvokeAddAsyncWithCorrectBook()
+        public async Task Handle_ShouldInvokeAddAsyncWithCorrectBook()
         {
             var command = new AddBookCommand("A new book", "A New Author");
 

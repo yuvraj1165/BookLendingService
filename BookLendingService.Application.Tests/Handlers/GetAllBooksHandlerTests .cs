@@ -17,7 +17,7 @@ namespace BookLendingService.Application.Tests.Handlers
         }
 
         [Test]
-        public async Task Handle_ShoudInvokeGetAllAsync()
+        public async Task Handle_ShouldInvokeGetAllAsync()
         {
             var query = new GetAllBooksQuery();
 

@@ -17,7 +17,7 @@ namespace BookLendingService.Application.Tests.Handlers
         }
 
         [Test]
-        public async Task Handle_ShoudInvokeCheckoutAsync()
+        public async Task Handle_ShouldInvokeCheckoutAsync()
         {
             var command = new CheckoutBookCommand(SampleBook.Id);
 
