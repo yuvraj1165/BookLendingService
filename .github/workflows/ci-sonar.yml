@@ -37,7 +37,7 @@ jobs:
       run: mkdir -p coverage-report
 
     - name: Run BookLendingService.Data.Tests with Coverlet
-      run: dotnet test BookLendingService.Data.Tests/BookLendingService.Data.Tests.csproj --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/bookLendingService.Data.Tests.cobertura.xml
+      run: dotnet test BookLendingService.Data.Tests/BookLendingService.Data.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/bookLendingService.Data.Tests.cobertura.xml
 
     - name: Debug:Check BookLendingService.Data.Tests coverage file
       run: ls -la coverage-report
