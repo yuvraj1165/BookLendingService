@@ -37,13 +37,13 @@ jobs:
       run: mkdir -p coverage-report
 
     - name: Run BookLendingService.Data.Tests with Coverlet
-      run: dotnet test BookLendingService.Data\BookLendingService.Data.csproj --no-build --verbosity normal \
+      run: dotnet test BookLendingService.Data/BookLendingService.Data.csproj --no-build --verbosity normal \
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
         /p:CoverletOutput=coverage-report/bookLendingService.Data.Tests.cobertura.xml
 
     - name: Run BookLendingService.Application.Tests with Coverlet
-      run: dotnet test BookLendingService.Application\BookLendingService.Application.csproj --no-build --verbosity normal \
+      run: dotnet test BookLendingService.Application/BookLendingService.Application.csproj --no-build --verbosity normal \
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
         /p:CoverletOutput=coverage-report/BookLendingService.Application.Tests.cobertura.xml
