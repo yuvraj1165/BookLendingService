@@ -89,19 +89,7 @@ jobs:
     - name: Debug:Check merged coverage file
       run: ls -l coverage-report/merged
 
-    - name: Debug:Print coverage XML (if present)
-      run: |
-        COVERAGE_XML="coverage-report/merged/coverage.cobertura.xml"
-        if [ -f "$COVERAGE_XML" ]; then
-          echo "Merged Coverage XML found:"
-          cat "$COVERAGE_XML"
-        else
-          echo "Merged Coverage XML not found at $COVERAGE_XML"
-          # Show any file that was produced for easier debugging
-          echo "Other files in coverage-report/merged:"
-          ls -la coverage-report/merged  || true
-          exit 1
-        fi
+    
   
     - name: End SonarCloud analysis
       env:
