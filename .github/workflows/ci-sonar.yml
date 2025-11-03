@@ -28,7 +28,7 @@ jobs:
     - name: Begin SonarCloud analysis
       env:
         SECRET: ${{ secrets.SONAR_TOKEN }}
-      run: dotnet sonarscanner begin /k:"yuvraj1165_BookLendingService" /o:"yuvraj1165" /d:sonar.login="$SECRET" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="coverage-report/coverage.cobertura.xml"
+      run: dotnet sonarscanner begin /k:"yuvraj1165_BookLendingService" /o:"yuvraj1165" /d:sonar.login="$SECRET" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="coverage-report/merged/coverage.cobertura.xml"
 
     - name: Build solution
       run: dotnet build --no-restore
@@ -36,18 +36,31 @@ jobs:
     - name: Create coverage-report directory
       run: mkdir -p coverage-report
 
-    - name: Run tests with Coverlet (produce cobertura XML)
-      # Run tests for the whole solution so all test projects are covered.
-      run: |
-        dotnet test BookLendingService.slnx --no-build --verbosity normal \
-          /p:CollectCoverage=true \
-          /p:CoverletOutput=coverage-report/coverage.cobertura.xml \
-          /p:CoverletOutputFormat=cobertura
+    - name: Run BookLendingService.Data.Tests with Coverlet
+      run: dotnet test BookLendingService.Data\BookLendingService.Data.csproj --no-build --verbosity normal \
+        /p:CollectCoverage=true \
+        /p:CoverletOutputFormat=cobertura \
+        /p:CoverletOutput=coverage-report/bookLendingService.Data.Tests.cobertura.xml
+
+    - name: Run BookLendingService.Application.Tests with Coverlet
+      run: dotnet test BookLendingService.Application\BookLendingService.Application.csproj --no-build --verbosity normal \
+        /p:CollectCoverage=true \
+        /p:CoverletOutputFormat=cobertura \
+        /p:CoverletOutput=coverage-report/BookLendingService.Application.Tests.cobertura.xml
+
+    - name: Install ReportGenerator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+    - name: Merge coverage reports
+      run: reportgenerator -reports:"coverage-report/*.cobertura.xml" -targetdir:"coverage-report/merged" -reporttypes:Cobertura
     
     - name: Debug:List coverage files
       run: |
         echo "Listing coverage-report directory:"
         ls -R coverage-report || true
+
+    - name: Debug:Check merged coverage file
+      run: ls -l coverage-report/merged
 
     - name: Debug:Print coverage XML (if present)
       run: |
