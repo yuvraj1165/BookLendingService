@@ -46,7 +46,7 @@ jobs:
       run: dotnet test BookLendingService.Application.Tests/BookLendingService.Application.Tests.csproj --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=coverage-report/BookLendingService.Application.Tests.cobertura.xml
 
     - name: Debug:Check BookLendingService.Application.Tests coverage file
-      run: ls -la coverage-report/BookLendingService.Application.Tests.cobertura.xml
+      run: ls -la coverage-report
 
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
