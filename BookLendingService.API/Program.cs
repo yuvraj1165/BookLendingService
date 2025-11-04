@@ -10,6 +10,9 @@ namespace BookLendingService.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddHealthChecks();
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -32,10 +35,9 @@ namespace BookLendingService.API
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
             app.MapControllers();
+            app.MapHealthChecks("/health");
 
             app.Run();
         }

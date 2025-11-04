@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/terraform/terraform.tfstate.backup
+/terraform/terraform.tfstate
+/terraform/tfplan
+
+# Terraform local cache
+.terraform/

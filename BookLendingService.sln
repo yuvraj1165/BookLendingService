@@ -21,6 +21,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A695DC5E-5A91-4DBB-9B80-662C90913FD6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "terraform", "terraform", "{C698A96D-82C7-4349-AAFE-8D19BD348AAD}"
+	ProjectSection(SolutionItems) = preProject
+		alb.tf = alb.tf
+		ecs.tf = ecs.tf
+		main.tf = main.tf
+		iam.tf = iam.tf
+		networking.tf = networking.tf
+		outputs.tf = outputs.tf
+		variables.tf = variables.tf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,5 +125,8 @@ Global
 		{588E1227-FD81-4984-B6C6-65C7AF66190B} = {A695DC5E-5A91-4DBB-9B80-662C90913FD6}
 		{F1CA4503-F430-4122-84BB-234AA962CB4C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{C39F8A0F-686E-470B-A88A-60E91FC0E3B6} = {A695DC5E-5A91-4DBB-9B80-662C90913FD6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {388CEEE6-7ABD-4BB3-A4D6-BD5463D3386B}
 	EndGlobalSection
 EndGlobal
